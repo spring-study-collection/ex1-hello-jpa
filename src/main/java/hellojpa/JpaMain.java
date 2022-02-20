@@ -35,9 +35,9 @@ public class JpaMain {
 
             System.out.println("=== SEQUENCE ID CHECK ==");
 
-            em.persist(member1); //1, 51
-            em.persist(member2); //MEM
-            em.persist(member3); //MEM
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
 
             System.out.println("member1.id = " + member1.getId());
             System.out.println("member2.id = " + member2.getId());
