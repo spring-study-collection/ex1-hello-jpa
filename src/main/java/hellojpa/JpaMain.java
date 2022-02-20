@@ -19,36 +19,38 @@ public class JpaMain {
         tx.begin();
 
         try {
-            //회원등록
-//            Member member = new Member();
-//            member.setId(2L);
-//            member.setName("HelloB");
-//
-//            em.persist(member);
+            //객체를 생성한 상태(비영속)
+//            Member member1 = new Member(150L, "A");
+//            Member member2 = new Member(160L, "B");
 
-            //회원조회
-//            Member findMember = em.find(Member.class, 1L);
-//            System.out.println("findMember.id = " + findMember.getId());
-//            System.out.println("findMember.name = " + findMember.getName());
+            //객체를 저장한 상태(영속)
+//            em.persist(member1); //아직 DB에 저장된 것이 아님
+//            em.persist(member2);
 
-            //회원삭제
-//            Member findMember = em.find(Member.class, 1L);
-//            em.remove(findMember);
+//            em.flush(); //강제로 flush 메커니즘 호출
 
-            //회원수정
-//            Member findMember = em.find(Member.class, 1L);
-//            findMember.setName("HelloJPA");
+//            Member findMember1 = em.find(Member.class, 150L);
+//            Member findMember2 = em.find(Member.class, 150L);
+//            System.out.println("result = " + (findMember1 == findMember2));
 
-            //전체회원목록 (JPQL)
-            //table이 아니라 엔티티 객체를 대상으로 쿼리 작성
-            List<Member> result = em.createQuery("select m from Member as m", Member.class)
-                    .setFirstResult(5) //offset
-                    .setMaxResults(8) //limit
-                    .getResultList();
-            for (Member member : result) {
-                System.out.println("member.name = " + member.getName());
-            }
+            //영속 엔티티 데이터 수정
+//            Member findMember = em.find(Member.class, 150L);
+//            findMember.setName("ZZZZZ");
 
+            //영속성 컨텍스트에서 분리(준영속)
+//            Member findMember = em.find(Member.class, 150L);
+//            findMember.setName("AAAAA");
+
+//            em.detach(findMember); //특정 엔티티만 준영속 상태로 전환
+//            em.clear(); //영속성 컨텍스트를 완전히 초기화
+//            em.close(); //영속성 컨텍스트를 종료
+
+//            Member findMember2 = em.find(Member.class, 150L);
+
+            //객체를 삭제한 상태(삭제)
+//            em.remove(member);
+
+            //커밋 후에 DB에 SQL 쿼리를 보냄
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
