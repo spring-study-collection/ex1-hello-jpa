@@ -19,32 +19,28 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member1 = new Member();
-            member1.setUsername("A");
 
-            Member member2 = new Member();
-            member2.setUsername("B");
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
 
-            Member member3 = new Member();
-            member3.setUsername("C");
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setTeam(team);
+            em.persist(member);
 
-//            System.out.println("=== IDENTITY ID CHECK ==");
-//            em.persist(member1);
-//            System.out.println("member.id = " + member1.getId());
-//            System.out.println("====================");
+            //DB에서 가져오는 SQL 확인할 때
+            em.flush();
+            em.clear();
 
-            System.out.println("=== SEQUENCE ID CHECK ==");
+            Member findMember = em.find(Member.class, member.getId());
 
-            em.persist(member1);
-            em.persist(member2);
-            em.persist(member3);
+            Team findTeam = findMember.getTeam();
+            System.out.println("findTeam = " + findTeam.getName());
 
-            System.out.println("member1.id = " + member1.getId());
-            System.out.println("member2.id = " + member2.getId());
-            System.out.println("member3.id = " + member3.getId());
-
-            System.out.println("====================");
-
+            Team newTeam = em.find(Team.class, 100L);
+            findMember.setTeam(newTeam);
+            
             //DB에 SQL 쿼리를 보내고 커밋
             tx.commit();
         } catch (Exception e) {
