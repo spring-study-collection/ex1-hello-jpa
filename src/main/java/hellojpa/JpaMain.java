@@ -19,6 +19,21 @@ public class JpaMain {
         tx.begin();
 
         try {
+
+            Movie movie = new Movie();
+            movie.setDirector("aaaa");
+            movie.setActor("bbbb");
+            movie.setName("제목");
+            movie.setPrice(10000);
+
+            em.persist(movie);
+
+            em.flush();
+            em.clear();
+
+            Item findItem = em.find(Item.class, movie.getId());
+            System.out.println("findItem = " + findItem);
+
             //DB에 SQL 쿼리를 보내고 커밋
             tx.commit();
         } catch (Exception e) {
