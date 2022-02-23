@@ -21,14 +21,6 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "TEAM_ID") //연관관계 주인
     private Team team;
 
-    @OneToOne
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
-
-//    @ManyToMany
-//    @JoinTable(name = "MEMBER_PRODUCT")
-//    private List<Product> products = new ArrayList<Product>();
-
     @OneToMany(mappedBy = "member")
     private List<MemberProduct> memderProducts = new ArrayList<MemberProduct>();
 
@@ -59,14 +51,5 @@ public class Member extends BaseEntity {
     public void changeTeam(Team team) {
         this.team = team;
         team.getMembers().add(this); //연관관계 편의 메소드
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", team=" + team +
-                '}';
     }
 }
