@@ -20,68 +20,41 @@ public class JpaMain {
 
         try {
 
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
+
             Member member1 = new Member();
-            member1.setUsername("hello");
+            member1.setUsername("member1");
+            member1.setTeam(team);
             em.persist(member1);
 
             Member member2 = new Member();
-            member2.setUsername("hello");
+            member2.setUsername("member2");
+            member2.setTeam(teamB);
             em.persist(member2);
 
             em.flush();
             em.clear();
 
-            //6. 프록시 초기화 관련 메서드
-//            Member refMember = em.getReference(Member.class, member1.getId());
-//            System.out.println("refMember = " + refMember.getClass()); //프록시
-//
-//            Hibernate.initialize(refMember); //강제 초기화
-//            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); //초기화 여부 확인
+            //2. 즉시로딩은 JPQL에서 N+1 문제를 일으킴
+//            List<Member> members = em.createQuery("select m from Member m", Member.class)
+//                    .getResultList();
+            //SQL: select * from Member
+            //SQL: select * from Team where TEAM_ID = xxx -> team, teamB 2번 실행
 
-
-            //5. 영속성 컨텍스트의 도움을 받을 수 없는 상태일 때, 프록시를 초기화하면 문제 발생
-//            Member refMember = em.getReference(Member.class, member1.getId());
-//            System.out.println("refMember = " + refMember.getClass()); //프록시
+            //1. LAZY를 사용해서 프록시로 조회
+//            Member m = em.find(Member.class, member1.getId());
 //
-//            em.detach(refMember); //준영속
-//            em.close();
-//            em.clear();
+//            System.out.println("m = " + m.getTeam().getClass()); //proxy
 //
-//            refMember.getUsername();
-
-            //4. 프록시로 조회되었으면 이후에 em.find()를 호출해도 프록시로 객체를 반환
-//            Member refMember = em.getReference(Member.class, member1.getId());
-//            System.out.println("refMember = " + refMember.getClass()); //프록시
-//
-//            Member findMember = em.find(Member.class, member1.getId());
-//            System.out.println("findMember = " + findMember.getClass()); //프록시
-//
-//            System.out.println("a == a: " + (refMember == findMember));
-
-            //3. 영속성 컨텍스트에 찾는 엔티티가 이미 있으면 em.getReference()를 호출해도 프록시 객체가 아닌 실제 엔티티 반환
-//            Member findMember = em.find(Member.class, member1.getId());
-//            System.out.println("findMember = " + findMember.getClass()); //Member
-//
-//            Member refMember = em.getReference(Member.class, member1.getId());
-//            System.out.println("refMember = " + refMember.getClass()); //Member
-//
-//            System.out.println("a == a: " + (findMember == refMember));
-
-            //2. 타입 비교 (== 말고 instance of 사용)
-//            Member m1 = em.find(Member.class, member1.getId()); //DB를 통해서 실제 엔티티 객체 조회
-//            Member m2 = em.getReference(Member.class, member2.getId()); //프록시 객체 조회
-//
-//            logic(m1, m2); //타입 비교
-
-            //1. 프록시 객체 조회
-//            Member findMember = em.getReference(Member.class, member1.getId());
-//            System.out.println("before findMember = " + findMember.getClass()); //프록시
-//            System.out.println("findMember.id = " + findMember.getId());
-//            System.out.println("findMember.username = " + findMember.getUsername());
-//            System.out.println("findMember.username = " + findMember.getUsername());
-//            System.out.println("after findMember = " + findMember.getClass()); //프록시
-
-
+//            System.out.println("====================");
+//            m.getTeam().getName(); //프록시 객체 초기화, SQL 쿼리 실행
+//            System.out.println("====================");
 
             //DB에 SQL 쿼리를 보내고 커밋
             tx.commit();
@@ -95,9 +68,4 @@ public class JpaMain {
         emf.close();
     }
 
-    private static void logic(Member m1, Member m2) {
-        //System.out.println("m1 == m2: " + (m1.getClass() == m2.getClass()));
-        System.out.println("m1 == m2: " + (m1 instanceof Member));
-        System.out.println("m1 == m2: " + (m2 instanceof Member));
-    }
 }
