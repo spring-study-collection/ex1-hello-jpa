@@ -5,6 +5,7 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class JpaMain {
 
@@ -20,34 +21,67 @@ public class JpaMain {
 
         try {
 
-            //2. 불변 객체로 만든 후 값 변경하고 싶을 때
-            Address address = new Address("city", "street", "10000");
-
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setHomeAddress(address);
-            em.persist(member);
-
-            Address newAddress = new Address("NewCity", address.getStreet(), address.getZipcode());
-            member.setHomeAddress(newAddress);
-
-            //1. 값 타입의 실제 인스턴스인 값을 공유하면 위험함 -> 인스턴스 복사해서 사용
-//            Address address = new Address("city", "street", "10000");
-//
+            //1. 값 타입 저장
 //            Member member = new Member();
 //            member.setUsername("member1");
-//            member.setHomeAddress(address);
+//            member.setHomeAddress(new Address("homeCity", "street", "10000"));
+//
+//            member.getFavoriteFoods().add("치킨");
+//            member.getFavoriteFoods().add("족발");
+//            member.getFavoriteFoods().add("피자");
+//
+//            member.getAddressHistory().add(new Address("old1", "street", "10000"));
+//            member.getAddressHistory().add(new Address("old2", "street", "10000"));
+//
 //            em.persist(member);
 //
-//            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
-//
-//            Member member2 = new Member();
-//            member2.setUsername("member2");
-//            member2.setHomeAddress(copyAddress);
-//            em.persist(member2);
+//            em.flush();
+//            em.clear();
 
-            //setter를 삭제하거나 private로 변경하여 불변 객체로 만듦
-            //member.getHomeAddress().setCity("newCity");
+            //2. 값 타입 조회
+//            System.out.println("========== START ==========");
+//            //값 타입 컬렉션은 지연 로딩
+//            Member findMember = em.find(Member.class, member.getId());
+//
+//            List<Address> addressHistory = findMember.getAddressHistory();
+//            for (Address address : addressHistory) {
+//                System.out.println("address = " + address.getCity());
+//            }
+//
+//            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+//            for (String favoriteFood : favoriteFoods) {
+//                System.out.println("favoriteFood = " + favoriteFood);
+//            }
+
+            //3. 값 타입 수정
+//            System.out.println("========== START ==========");
+//            Member findMember = em.find(Member.class, member.getId());
+//
+//            //homeCity -> newCity
+//            Address a = findMember.getHomeAddress();
+//            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));
+//
+//            //치킨 -> 한식
+//            findMember.getFavoriteFoods().remove("치킨");
+//            findMember.getFavoriteFoods().add("한식");
+//
+//            //old1 -> newCity1
+//            findMember.getAddressHistory().remove(new Address("old1", "street", "10000"));
+//            findMember.getAddressHistory().add(new Address("newCity1", "street", "10000"));
+
+            //4. 값 타입 컬렉션 대신에 일대다 관계 이용
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(new Address("homeCity", "street", "10000"));
+
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
+
+            member.getAddressHistory().add(new AddressEntity("old1", "street", "10000"));
+            member.getAddressHistory().add(new AddressEntity("old2", "street", "10000"));
+
+            em.persist(member);
 
             //DB에 SQL 쿼리를 보내고 커밋
             tx.commit();
