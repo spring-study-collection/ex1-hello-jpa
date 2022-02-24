@@ -20,12 +20,34 @@ public class JpaMain {
 
         try {
 
-            Member member = new Member();
-            member.setUsername("hello");
-            member.setHomeAddress(new Address("city", "street", "10000"));
-            member.setWordPeriod(new Period());
+            //2. 불변 객체로 만든 후 값 변경하고 싶을 때
+            Address address = new Address("city", "street", "10000");
 
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(address);
             em.persist(member);
+
+            Address newAddress = new Address("NewCity", address.getStreet(), address.getZipcode());
+            member.setHomeAddress(newAddress);
+
+            //1. 값 타입의 실제 인스턴스인 값을 공유하면 위험함 -> 인스턴스 복사해서 사용
+//            Address address = new Address("city", "street", "10000");
+//
+//            Member member = new Member();
+//            member.setUsername("member1");
+//            member.setHomeAddress(address);
+//            em.persist(member);
+//
+//            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+//
+//            Member member2 = new Member();
+//            member2.setUsername("member2");
+//            member2.setHomeAddress(copyAddress);
+//            em.persist(member2);
+
+            //setter를 삭제하거나 private로 변경하여 불변 객체로 만듦
+            //member.getHomeAddress().setCity("newCity");
 
             //DB에 SQL 쿼리를 보내고 커밋
             tx.commit();
