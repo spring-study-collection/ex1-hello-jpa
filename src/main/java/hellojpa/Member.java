@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Member extends BaseEntity {
+public class Member {
 
     @Id @GeneratedValue
     @Column(name = "MEMBER_ID")
@@ -14,17 +14,19 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name = "TEAM_ID")
-//    private Long teamId;
+    @Embedded
+    private Period wordPeriod;
 
-//    @ManyToOne(fetch = FetchType.LAZY) //지연로딩
-    @ManyToOne(fetch = FetchType.EAGER) //즉시로딩
-    @JoinColumn(name = "TEAM_ID") //연관관계 주인
-    private Team team;
+    @Embedded
+    private Address homeAddress;
 
-    @OneToMany(mappedBy = "member")
-    private List<MemberProduct> memderProducts = new ArrayList<MemberProduct>();
-
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name="city", column=@Column(name="WORK_CITY")),
+            @AttributeOverride(name="street", column=@Column(name="WORK_STREET")),
+            @AttributeOverride(name="zipcode", column=@Column(name="WORK_ZIPCODE"))
+    })
+    private Address wordAddress;
     public Long getId() {
         return id;
     }
@@ -41,16 +43,19 @@ public class Member extends BaseEntity {
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Period getWordPeriod() {
+        return wordPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWordPeriod(Period wordPeriod) {
+        this.wordPeriod = wordPeriod;
     }
 
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this); //연관관계 편의 메소드
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }

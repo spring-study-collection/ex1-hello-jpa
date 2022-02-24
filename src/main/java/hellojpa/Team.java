@@ -12,13 +12,13 @@ public class Team extends BaseEntity {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "team") //연관관계 주인x (조회만 가능)
-    private List<Member> members = new ArrayList<Member>();
-
-    public void addMember(Member member) {
-        member.setTeam(this);
-        members.add(member);
-    }
+//    @OneToMany(mappedBy = "team") //연관관계 주인x (조회만 가능)
+//    private List<Member> members = new ArrayList<Member>();
+//
+//    public void addMember(Member member) {
+//        member.setTeam(this);
+//        members.add(member);
+//    }
 
     public Long getId() {
         return id;
@@ -36,12 +36,12 @@ public class Team extends BaseEntity {
         this.name = name;
     }
 
-    public List<Member> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
+//    public List<Member> getMembers() {
+//        return members;
+//    }
+//
+//    public void setMembers(List<Member> members) {
+//        this.members = members;
+//    }
 
 }
